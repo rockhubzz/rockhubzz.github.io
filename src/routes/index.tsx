@@ -127,6 +127,7 @@ function Index() {
       <Stack />
       <Contact />
       <Footer />
+      <ThemeToggle />
     </div>
   );
 }
@@ -1013,5 +1014,77 @@ function Footer() {
         </span>
       </div>
     </footer>
+  );
+}
+
+function ThemeToggle() {
+  const [dark, setDark] = useState(true);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    const isDark = stored ? stored === "dark" : true;
+    setDark(isDark);
+    document.documentElement.classList.toggle("light", !isDark);
+  }, []);
+
+  const toggle = () => {
+    setAnimating(true);
+    const next = !dark;
+    setDark(next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+    document.documentElement.classList.toggle("light", !next);
+    setTimeout(() => setAnimating(false), 400);
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      className="fixed bottom-6 right-6 z-50 group"
+    >
+      {/* pulse ring */}
+      <span className="absolute inset-0 rounded-full bg-primary/20 animate-[theme-pulse-ring_2s_ease-out_infinite] group-hover:animate-none" />
+      {/* button */}
+      <span
+        className={`relative flex h-12 w-12 items-center justify-center rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-110 transition-all duration-300 ${
+          animating ? "scale-90" : ""
+        }`}
+      >
+        {/* sun icon */}
+        <svg
+          className={`absolute h-5 w-5 text-amber-500 transition-all duration-300 ${
+            dark
+              ? "rotate-0 scale-100 opacity-100"
+              : "rotate-90 scale-0 opacity-0"
+          }`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </svg>
+        {/* moon icon */}
+        <svg
+          className={`absolute h-5 w-5 text-primary transition-all duration-300 ${
+            dark
+              ? "-rotate-90 scale-0 opacity-0"
+              : "rotate-0 scale-100 opacity-100"
+          }`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </span>
+    </button>
   );
 }
