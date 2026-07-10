@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build static site
+        env:
+          # Tells Nitro (bundled by TanStack Start) to prerender every route
+          # into plain HTML/CSS/JS instead of a server bundle.
+          NITRO_PRESET: static
+          # If this is a *project* page (https://<user>.github.io/<repo>/),
+          # set BASE_PATH in the repo's Actions variables to "/<repo>/".
+          # For a user site (https://<user>.github.io/) leave it unset.
+          VITE_BASE_PATH: ${{ vars.BASE_PATH || '/' }}
+        run: bun run build
+
+      - name: Prepare Pages artifact
+        run: |
+          # Nitro's static preset writes prerendered HTML to .output/public.
+          # Fall back to dist/ if a future preset change lands there instead.
+          if [ -d ".output/public" ]; then
+            cp -r .output/public ./_site
+          elif [ -d "dist" ]; then
+            cp -r dist ./_site
+          else
+            echo "No build output directory found." && exit 1
+          fi
+          # GitHub Pages disables Jekyll processing when this file exists,
+          # which we need so files/folders starting with "_" are served.
+          touch ./_site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
