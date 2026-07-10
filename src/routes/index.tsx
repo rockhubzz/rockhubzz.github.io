@@ -136,10 +136,14 @@ function useReveal() {
   return ref;
 }
 
-function RevealSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function RevealSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useReveal();
   return (
-    <div ref={ref} className={`reveal-section ${className}`}>
+    <div
+      ref={ref}
+      className={`reveal-section ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
       {children}
     </div>
   );
@@ -521,7 +525,7 @@ function About() {
         <div className="blob about-blob-2" />
         <div className="section-grid-pattern" style={{ "--gx": "70%", "--gy": "30%" } as React.CSSProperties} />
       </div>
-      <RevealSection>
+      <RevealSection delay={80}>
         <SectionLabel>01 — About</SectionLabel>
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
@@ -552,37 +556,40 @@ function About() {
             </div>
           </div>
           <div className="space-y-5">
-            <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 sm:p-7 hover:border-primary/20 transition-colors duration-300">
-              <div className="text-xs font-mono uppercase tracking-widest text-primary">
-                Currently
+            <RevealSection delay={140} className="block">
+              <div className="interactive-surface rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 sm:p-7 hover:border-primary/20 transition-colors duration-300">
+                <div className="text-xs font-mono uppercase tracking-widest text-primary">
+                  Currently
+                </div>
+                <ul className="mt-4 space-y-3 text-sm">
+                  <Row label="Focus" value="IoT, Full-stack, Flutter" />
+                  <Row label="Learning" value="Distributed systems, Edge ML" />
+                  <Row label="Location" value="Malang, East Java" />
+                  <Row label="Open to" value="Internships & collaborations" />
+                </ul>
               </div>
-              <ul className="mt-4 space-y-3 text-sm">
-                <Row label="Focus" value="IoT, Full-stack, Flutter" />
-                <Row label="Learning" value="Distributed systems, Edge ML" />
-                <Row label="Location" value="Malang, East Java" />
-                <Row label="Open to" value="Internships & collaborations" />
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/20 transition-colors duration-300">
-              <div className="text-xs font-mono uppercase tracking-widest text-primary">
-                Highlights
+            </RevealSection>
+            <RevealSection delay={180} className="block">
+              <div className="interactive-surface rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/20 transition-colors duration-300">
+                <div className="text-xs font-mono uppercase tracking-widest text-primary">
+                  Highlights
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  {HIGHLIGHTS.map((h, index) => (
+                    <RevealSection key={h.label} delay={220 + index * 40} className="block">
+                      <div className="highlight-badge rounded-xl bg-secondary/50 p-3 text-center cursor-default">
+                        <div className="font-display text-lg font-bold text-foreground">
+                          {h.label}
+                        </div>
+                        <div className="mt-0.5 text-[11px] text-muted-foreground leading-tight">
+                          {h.detail}
+                        </div>
+                      </div>
+                    </RevealSection>
+                  ))}
+                </div>
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {HIGHLIGHTS.map((h) => (
-                  <div
-                    key={h.label}
-                    className="highlight-badge rounded-xl bg-secondary/50 p-3 text-center cursor-default"
-                  >
-                    <div className="font-display text-lg font-bold text-foreground">
-                      {h.label}
-                    </div>
-                    <div className="mt-0.5 text-[11px] text-muted-foreground leading-tight">
-                      {h.detail}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            </RevealSection>
           </div>
         </div>
       </RevealSection>
@@ -610,89 +617,93 @@ function Education() {
         <div className="blob edu-blob-2" />
         <div className="section-grid-pattern" style={{ "--gx": "30%", "--gy": "60%" } as React.CSSProperties} />
       </div>
-      <RevealSection>
+      <RevealSection delay={80}>
         <SectionLabel>02 — Education</SectionLabel>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
           Where I&apos;m learning.
         </h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <div className="edu-card rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30">
-            <div className="flex items-start gap-4">
-              <div className="edu-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                </svg>
+          <RevealSection delay={120} className="block">
+            <div className="edu-card interactive-surface rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30">
+              <div className="flex items-start gap-4">
+                <div className="edu-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-display text-lg font-semibold">
+                    Politeknik Negeri Malang
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Diploma IV — Teknik Informatika
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-display text-lg font-semibold">
-                  Politeknik Negeri Malang
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Diploma IV — Teknik Informatika
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {[
-                "Data Structures",
-                "Web Programming",
-                "Framework Programming",
-                "Mobile Programming",
-                "Database Systems",
-                "OOP",
-              ].map((course) => (
-                <span
-                  key={course}
-                  className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors duration-200 cursor-default"
-                >
-                  {course}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="edu-card rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30">
-            <div className="flex items-start gap-4">
-              <div className="edu-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent">
-                <img
-                  src="/sarastya.png"
-                  alt="Logo"
-                  className="h-[35px] w-[35px] object-contain"
-                />            
-              </div>
-              <div className="flex-1">
-                <h3 className="font-display text-lg font-semibold">
-                  Sarastya Agility Innovations
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Full Stack Developer Intern
-                </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {[
+                  "Data Structures",
+                  "Web Programming",
+                  "Framework Programming",
+                  "Mobile Programming",
+                  "Database Systems",
+                  "OOP",
+                ].map((course) => (
+                  <span
+                    key={course}
+                    className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors duration-200 cursor-default"
+                  >
+                    {course}
+                  </span>
+                ))}
               </div>
             </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {[
-                "Backend Web Development",
-                "Flutter Development",
-                "Next.js / React",
-                ".NET / C#",
-                "CI/CD",
-              ].map((topic) => (
-                <span
-                  key={topic}
-                  className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors duration-200 cursor-default"
-                >
-                  {topic}
-                </span>
-              ))}
+          </RevealSection>
+          <RevealSection delay={180} className="block">
+            <div className="edu-card interactive-surface rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30">
+              <div className="flex items-start gap-4">
+                <div className="edu-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent">
+                  <img
+                    src="/sarastya.png"
+                    alt="Logo"
+                    className="h-[35px] w-[35px] object-contain"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-display text-lg font-semibold">
+                    Sarastya Agility Innovations
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Full Stack Developer Intern
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {[
+                  "Backend Web Development",
+                  "Flutter Development",
+                  "Next.js / React",
+                  ".NET / C#",
+                  "CI/CD",
+                ].map((topic) => (
+                  <span
+                    key={topic}
+                    className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors duration-200 cursor-default"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealSection>
         </div>
       </RevealSection>
     </section>
@@ -719,7 +730,7 @@ function Projects() {
         <div className="blob projects-blob-2" />
         <div className="section-grid-pattern" style={{ "--gx": "60%", "--gy": "40%" } as React.CSSProperties} />
       </div>
-      <RevealSection>
+      <RevealSection delay={80}>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <SectionLabel>03 — Selected work</SectionLabel>
@@ -767,8 +778,10 @@ function Projects() {
         </div>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => (
-            <ProjectCard key={p.name} p={p} />
+          {filtered.map((p, index) => (
+            <RevealSection key={p.name} delay={120 + index * 70} className="h-full">
+              <ProjectCard p={p} />
+            </RevealSection>
           ))}
         </div>
       </RevealSection>
@@ -1007,17 +1020,17 @@ function Stack() {
         <div className="blob stack-blob-2" />
         <div className="section-grid-pattern" style={{ "--gx": "40%", "--gy": "50%" } as React.CSSProperties} />
       </div>
-      <RevealSection>
+      <RevealSection delay={80}>
         <SectionLabel>04 — Stack</SectionLabel>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
           Tools I use.
         </h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {STACK.map((g) => (
-            <div
-              key={g.group}
-              className="stack-card rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/30 hover:bg-card/80 group cursor-default"
-            >
+          {STACK.map((g, index) => (
+            <RevealSection key={g.group} delay={120 + index * 70} className="block">
+              <div
+                className="stack-card interactive-surface rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/30 hover:bg-card/80 group cursor-default"
+              >
               <div className="flex items-center gap-3">
                 <div className="stack-icon grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary group-hover:from-primary/25 transition-colors">
                   {icons[g.icon]}
@@ -1037,7 +1050,8 @@ function Stack() {
                   </li>
                 ))}
               </ul>
-            </div>
+              </div>
+            </RevealSection>
           ))}
         </div>
       </RevealSection>
@@ -1056,8 +1070,9 @@ function Contact() {
         <div className="blob contact-blob-2" />
         <div className="section-grid-pattern" style={{ "--gx": "50%", "--gy": "40%" } as React.CSSProperties} />
       </div>
-      <RevealSection>
+      <RevealSection delay={80}>
         <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card/50 backdrop-blur-sm p-8 sm:p-14">
+          <SectionAccent className="opacity-70" />
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[-50%] right-[-20%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[100px]" />
             <div className="absolute bottom-[-30%] left-[-10%] w-[400px] h-[400px] rounded-full bg-accent/5 blur-[80px]" />
@@ -1139,6 +1154,16 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-primary">
       <span className="h-px w-8 bg-gradient-to-r from-primary to-transparent" />
       {children}
+    </div>
+  );
+}
+
+function SectionAccent({ className = "" }: { className?: string }) {
+  return (
+    <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
+      <div className="decor-line absolute left-6 top-8" />
+      <div className="decor-dot absolute right-8 top-10" />
+      <div className="decor-dot absolute bottom-8 left-8" />
     </div>
   );
 }
