@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -116,6 +116,35 @@ const HIGHLIGHTS = [
   },
 ];
 
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("revealed");
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
+function RevealSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useReveal();
+  return (
+    <div ref={ref} className={`reveal-section ${className}`}>
+      {children}
+    </div>
+  );
+}
+
 function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -135,11 +164,27 @@ function Index() {
 function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const toggleMenu = useCallback(() => {
+    if (open) {
+      setMenuVisible(false);
+      setTimeout(() => setOpen(false), 200);
+    } else {
+      setOpen(true);
+      requestAnimationFrame(() => setMenuVisible(true));
+    }
+  }, [open]);
+
+  const closeMenu = useCallback(() => {
+    setMenuVisible(false);
+    setTimeout(() => setOpen(false), 200);
   }, []);
 
   const links = [
@@ -162,7 +207,7 @@ function Nav() {
           href="#top"
           className="flex min-w-0 items-center gap-2.5 font-display font-semibold group"
         >
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-amber-600 shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-amber-600 shadow-lg shadow-primary/25 group-hover:shadow-primary/40 group-hover:scale-110 transition-all duration-300">
             <img
               src="/R-white.ico"
               alt="Rocky Alessandro Kristanto"
@@ -178,7 +223,7 @@ function Nav() {
             <a
               key={l.href}
               href={l.href}
-              className="px-3 py-1.5 rounded-lg hover:text-foreground hover:bg-white/5 transition-all"
+              className="nav-underline px-3 py-1.5 rounded-lg hover:text-foreground hover:bg-white/5 transition-all"
             >
               {l.label}
             </a>
@@ -187,14 +232,14 @@ function Nav() {
             href="https://github.com/rockhubzz"
             target="_blank"
             rel="noreferrer"
-            className="ml-2 inline-flex items-center rounded-full bg-gradient-to-r from-primary to-amber-500 px-4 py-2 text-sm font-medium text-primary-foreground hover:shadow-lg hover:shadow-primary/25 transition-all hover:-translate-y-0.5"
+            className="ml-2 inline-flex items-center rounded-full bg-gradient-to-r from-primary to-amber-500 px-4 py-2 text-sm font-medium text-primary-foreground hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] active:scale-[0.97]"
           >
             GitHub
           </a>
         </nav>
         <button
-          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 hover:bg-white/5 transition"
-          onClick={() => setOpen((v) => !v)}
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 hover:bg-white/5 transition-all duration-200 hover:scale-110 active:scale-95"
+          onClick={toggleMenu}
           aria-label="Toggle menu"
         >
           <svg
@@ -204,6 +249,7 @@ function Nav() {
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            className={`transition-transform duration-300 ${open ? "rotate-90" : "rotate-0"}`}
           >
             {open ? (
               <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
@@ -214,14 +260,18 @@ function Nav() {
         </button>
       </div>
       {open && (
-        <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur-xl">
-          <div className="mx-auto max-w-6xl px-5 py-4 flex flex-col gap-1 text-sm">
+        <div
+          className={`md:hidden border-t border-border/40 bg-background/95 backdrop-blur-xl transition-all duration-300 ${
+            menuVisible ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <div className={`mx-auto max-w-6xl px-5 py-4 flex flex-col gap-1 text-sm ${menuVisible ? "mobile-menu-open" : ""}`}>
             {links.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
-                onClick={() => setOpen(false)}
-                className="text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg px-3 py-2.5 transition-all"
+                onClick={closeMenu}
+                className="mobile-menu-item text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg px-3 py-2.5 transition-all"
               >
                 {l.label}
               </a>
@@ -230,7 +280,7 @@ function Nav() {
               href="https://github.com/rockhubzz"
               target="_blank"
               rel="noreferrer"
-              className="mt-2 inline-flex w-fit items-center rounded-full bg-gradient-to-r from-primary to-amber-500 px-4 py-2 font-medium text-primary-foreground"
+              className="mobile-menu-item mt-2 inline-flex w-fit items-center rounded-full bg-gradient-to-r from-primary to-amber-500 px-4 py-2 font-medium text-primary-foreground"
             >
               GitHub
             </a>
@@ -337,47 +387,49 @@ function Hero() {
       <div className="absolute inset-0 grid-bg pointer-events-none opacity-40" />
 
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8 py-16 sm:py-24">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-mono text-primary backdrop-blur-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-          Tech Enthusiast
-        </div>
-        <h1 className="mt-8 font-display text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight max-w-4xl">
-          Rocky Alessandro{" "}
-          <br className="hidden sm:block" />
-          <span className="text-gradient">Kristanto</span>
-        </h1>
-        <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-          Full-stack, mobile, and IoT developer based in Malang, Indonesia. I
-          build systems end-to-end — from firmware and sensors, through APIs and
-          databases, to the interfaces people actually use.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            href="#work"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-amber-500 px-6 py-3 text-sm font-medium text-primary-foreground shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all"
-          >
-            View work
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
+        <div className="hero-stagger flex flex-col items-start">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-mono text-primary backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Tech Enthusiast
+          </div>
+          <h1 className="mt-8 font-display text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight max-w-4xl">
+            Rocky Alessandro{" "}
+            <br className="hidden sm:block" />
+            <span className="text-gradient">Kristanto</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
+            Full-stack, mobile, and IoT developer based in Malang, Indonesia. I
+            build systems end-to-end — from firmware and sensors, through APIs and
+            databases, to the interfaces people actually use.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#work"
+              className="ripple-btn inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-amber-500 px-6 py-3 text-sm font-medium text-primary-foreground shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 hover:scale-[1.03] transition-all duration-300 active:scale-[0.97]"
             >
-              <path
-                d="M5 12h14M13 6l6 6-6 6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
-          <a
-            href="#contact"
-            className="inline-flex items-center rounded-full border border-border/60 bg-card/60 backdrop-blur-sm px-6 py-3 text-sm font-medium hover:bg-card hover:border-border transition-all"
-          >
-            Get in touch
-          </a>
+              View work
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path
+                  d="M5 12h14M13 6l6 6-6 6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center rounded-full border border-border/60 bg-card/60 backdrop-blur-sm px-6 py-3 text-sm font-medium hover:bg-card hover:border-border hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
+            >
+              Get in touch
+            </a>
+          </div>
         </div>
 
         {/* Stats */}
@@ -388,11 +440,11 @@ function Hero() {
             { k: "IoT → Web", v: "End-to-end" },
             { k: "2026", v: "Latest Release" },
           ].map((s) => (
-            <div key={s.v} className="group">
+            <div key={s.v} className="stat-card group cursor-default">
               <div className="font-display text-2xl sm:text-3xl font-bold text-gradient">
                 {s.k}
               </div>
-              <div className="mt-1 text-xs sm:text-sm text-muted-foreground">
+              <div className="mt-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                 {s.v}
               </div>
             </div>
@@ -406,69 +458,71 @@ function Hero() {
 function About() {
   return (
     <section id="about" className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
-      <SectionLabel>01 — About</SectionLabel>
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-        <div>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">
-            Builder across the whole stack — hardware to interface.
-          </h2>
-          <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
-            <p>
-              I&apos;m a developer at{" "}
-              <span className="text-foreground font-medium">
-                Politeknik Negeri Malang
-              </span>{" "}
-              (TI-3D) who enjoys pulling the whole thread — designing embedded
-              firmware, wiring it through message brokers, standing up the API,
-              and finishing with a UI that feels calm to use.
-            </p>
-            <p>
-              Recent work spans an IoT platform for fire hydrants, a full-stack
-              operations system for community kitchens (Makan Bergizi Gratis), a
-              housing management mobile app, and a face age detection experiment.
-              I care about clean domain models, sensible defaults, and shipping.
-            </p>
-            <p>
-              When I&apos;m not coding, you&apos;ll find me exploring new
-              technologies, contributing to open source, or diving into the latest
-              in edge ML and distributed systems.
-            </p>
+      <RevealSection>
+        <SectionLabel>01 — About</SectionLabel>
+        <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+          <div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">
+              Builder across the whole stack — hardware to interface.
+            </h2>
+            <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                I&apos;m a developer at{" "}
+                <span className="text-foreground font-medium">
+                  Politeknik Negeri Malang
+                </span>{" "}
+                who enjoys pulling the whole thread — designing embedded
+                firmware, wiring it through message brokers, standing up the API,
+                and finishing with a UI that feels calm to use.
+              </p>
+              <p>
+                Recent work spans an IoT platform for fire hydrants, a full-stack
+                operations system for community kitchens (Makan Bergizi Gratis), a
+                housing management mobile app, and a face age detection experiment.
+                I care about clean domain models, sensible defaults, and shipping.
+              </p>
+              <p>
+                When I&apos;m not coding, you&apos;ll find me exploring new
+                technologies, contributing to open source, or diving into the latest
+                in edge ML and distributed systems.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-5">
+            <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 sm:p-7 hover:border-primary/20 transition-colors duration-300">
+              <div className="text-xs font-mono uppercase tracking-widest text-primary">
+                Currently
+              </div>
+              <ul className="mt-4 space-y-3 text-sm">
+                <Row label="Focus" value="IoT, Full-stack, Flutter" />
+                <Row label="Learning" value="Distributed systems, Edge ML" />
+                <Row label="Location" value="Malang, East Java" />
+                <Row label="Open to" value="Internships & collaborations" />
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/20 transition-colors duration-300">
+              <div className="text-xs font-mono uppercase tracking-widest text-primary">
+                Highlights
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                {HIGHLIGHTS.map((h) => (
+                  <div
+                    key={h.label}
+                    className="highlight-badge rounded-xl bg-secondary/50 p-3 text-center cursor-default"
+                  >
+                    <div className="font-display text-lg font-bold text-foreground">
+                      {h.label}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-muted-foreground leading-tight">
+                      {h.detail}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="space-y-5">
-          <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 sm:p-7">
-            <div className="text-xs font-mono uppercase tracking-widest text-primary">
-              Currently
-            </div>
-            <ul className="mt-4 space-y-3 text-sm">
-              <Row label="Focus" value="IoT, Full-stack, Flutter" />
-              <Row label="Learning" value="Distributed systems, Edge ML" />
-              <Row label="Location" value="Malang, East Java" />
-              <Row label="Open to" value="Internships & collaborations" />
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6">
-            <div className="text-xs font-mono uppercase tracking-widest text-primary">
-              Highlights
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {HIGHLIGHTS.map((h) => (
-                <div
-                  key={h.label}
-                  className="rounded-xl bg-secondary/50 p-3 text-center"
-                >
-                  <div className="font-display text-lg font-bold text-foreground">
-                    {h.label}
-                  </div>
-                  <div className="mt-0.5 text-[11px] text-muted-foreground leading-tight">
-                    {h.detail}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      </RevealSection>
     </section>
   );
 }
@@ -488,92 +542,91 @@ function Education() {
       id="education"
       className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24"
     >
-      <SectionLabel>02 — Education</SectionLabel>
-      <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
-        Where I&apos;m learning.
-      </h2>
-      <div className="mt-10 grid gap-5 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30 transition-colors">
-          <div className="flex items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
+      <RevealSection>
+        <SectionLabel>02 — Education</SectionLabel>
+        <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
+          Where I&apos;m learning.
+        </h2>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2">
+          <div className="edu-card rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30">
+            <div className="flex items-start gap-4">
+              <div className="edu-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display text-lg font-semibold">
+                  Politeknik Negeri Malang
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Diploma IV — Teknik Informatika
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="font-display text-lg font-semibold">
-                Politeknik Negeri Malang
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Diploma IV — Teknik Informatika
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground/60">
-                NIM: 2341720197
-              </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                "Data Structures",
+                "Web Programming",
+                "Framework Programming",
+                "Mobile Programming",
+                "Database Systems",
+                "OOP",
+              ].map((course) => (
+                <span
+                  key={course}
+                  className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors duration-200 cursor-default"
+                >
+                  {course}
+                </span>
+              ))}
             </div>
           </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {[
-              "Data Structures",
-              "Web Programming",
-              "Framework Programming",
-              "Mobile Programming",
-              "Database Systems",
-              "OOP",
-            ].map((course) => (
-              <span
-                key={course}
-                className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground"
-              >
-                {course}
-              </span>
-            ))}
+          <div className="edu-card rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30">
+            <div className="flex items-start gap-4">
+              <div className="edu-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent">
+                <img
+                  src="/sarastya.png"
+                  alt="Logo"
+                  className="h-[35px] w-[35px] object-contain"
+                />            
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display text-lg font-semibold">
+                  Sarastya Agility Innovations
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Full Stack Developer Intern
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                "Backend Web Development",
+                "Flutter Development",
+                "Next.js / React",
+                ".NET / C#",
+                "CI/CD",
+              ].map((topic) => (
+                <span
+                  key={topic}
+                  className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors duration-200 cursor-default"
+                >
+                  {topic}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-7 hover:border-primary/30 transition-colors">
-          <div className="flex items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 text-accent">
-              <img
-                src="/sarastya.png"
-                alt="Logo"
-                className="h-[35px] w-[35px] object-contain"
-              />            
-            </div>
-            <div className="flex-1">
-              <h3 className="font-display text-lg font-semibold">
-                Sarastya Agility Innovations
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Full Stack Developer Intern
-              </p>
-            </div>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {[
-              "Backend Web Development",
-              "Flutter Development",
-              "Next.js / React",
-              ".NET / C#",
-              "CI/CD",
-            ].map((topic) => (
-              <span
-                key={topic}
-                className="rounded-lg bg-secondary/80 px-2.5 py-1 text-[11px] font-mono text-muted-foreground"
-              >
-                {topic}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
+      </RevealSection>
     </section>
   );
 }
@@ -593,57 +646,59 @@ function Projects() {
       id="work"
       className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <SectionLabel>03 — Selected work</SectionLabel>
-          <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
-            Things I&apos;ve built.
-          </h2>
+      <RevealSection>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <SectionLabel>03 — Selected work</SectionLabel>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
+              Things I&apos;ve built.
+            </h2>
+          </div>
+          <a
+            href="https://github.com/rockhubzz?tab=repositories"
+            target="_blank"
+            rel="noreferrer"
+            className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200"
+          >
+            All repositories →
+          </a>
         </div>
-        <a
-          href="https://github.com/rockhubzz?tab=repositories"
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm text-muted-foreground hover:text-foreground transition"
-        >
-          All repositories →
-        </a>
-      </div>
 
-      {/* Filter pills */}
-      <div className="mt-8 flex flex-wrap gap-2">
-        <button
-          onClick={() => setFilter("all")}
-          className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
-            filter === "all"
-              ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-              : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
-          }`}
-        >
-          All
-        </button>
-        {["TypeScript", "Dart", "C#", "C++", "Python", "Java", "PHP"].map(
-          (tag) => (
-            <button
-              key={tag}
-              onClick={() => setFilter(tag)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
-                filter === tag
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
-              }`}
-            >
-              {tag}
-            </button>
-          )
-        )}
-      </div>
+        {/* Filter pills */}
+        <div className="mt-8 flex flex-wrap gap-2">
+          <button
+            onClick={() => setFilter("all")}
+            className={`filter-pill rounded-full px-3.5 py-1.5 text-xs font-medium cursor-pointer ${
+              filter === "all"
+                ? "filter-pill-active bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
+            }`}
+          >
+            All
+          </button>
+          {["TypeScript", "Dart", "C#", "C++", "Python", "Java", "PHP"].map(
+            (tag) => (
+              <button
+                key={tag}
+                onClick={() => setFilter(tag)}
+                className={`filter-pill rounded-full px-3.5 py-1.5 text-xs font-medium cursor-pointer ${
+                  filter === tag
+                    ? "filter-pill-active bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                    : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
+                }`}
+              >
+                {tag}
+              </button>
+            )
+          )}
+        </div>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((p) => (
-          <ProjectCard key={p.name} p={p} />
-        ))}
-      </div>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((p) => (
+            <ProjectCard key={p.name} p={p} />
+          ))}
+        </div>
+      </RevealSection>
     </section>
   );
 }
@@ -651,7 +706,7 @@ function Projects() {
 function ProjectCard({ p }: { p: Project }) {
   return (
     <article
-      className={`card-hover group relative flex flex-col rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden hover:-translate-y-1 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 ${
+      className={`project-card group relative flex flex-col rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden hover:border-primary/40 ${
         p.featured ? "sm:col-span-2 lg:col-span-1" : ""
       }`}
     >
@@ -778,7 +833,7 @@ function ProjectCard({ p }: { p: Project }) {
                 strokeLinejoin="round"
               />
             </svg>
-            Code
+            Repository
           </a>
           {p.demo && (
             <a
@@ -874,38 +929,40 @@ function Stack() {
       id="stack"
       className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24"
     >
-      <SectionLabel>04 — Stack</SectionLabel>
-      <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
-        Tools I use.
-      </h2>
-      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {STACK.map((g) => (
-          <div
-            key={g.group}
-            className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/30 hover:bg-card/80 transition-all group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary group-hover:from-primary/25 transition-colors">
-                {icons[g.icon]}
+      <RevealSection>
+        <SectionLabel>04 — Stack</SectionLabel>
+        <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
+          Tools I use.
+        </h2>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {STACK.map((g) => (
+            <div
+              key={g.group}
+              className="stack-card rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/30 hover:bg-card/80 group cursor-default"
+            >
+              <div className="flex items-center gap-3">
+                <div className="stack-icon grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary group-hover:from-primary/25 transition-colors">
+                  {icons[g.icon]}
+                </div>
+                <div className="text-xs font-mono uppercase tracking-widest text-primary">
+                  {g.group}
+                </div>
               </div>
-              <div className="text-xs font-mono uppercase tracking-widest text-primary">
-                {g.group}
-              </div>
+              <ul className="mt-5 space-y-2.5 text-sm">
+                {g.items.map((i) => (
+                  <li
+                    key={i}
+                    className="flex items-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-default"
+                  >
+                    <span className="h-1 w-1 rounded-full bg-primary/60 group-hover:bg-primary transition-colors" />
+                    <span className="text-foreground">{i}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="mt-5 space-y-2.5 text-sm">
-              {g.items.map((i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-2.5 text-muted-foreground"
-                >
-                  <span className="h-1 w-1 rounded-full bg-primary/60" />
-                  <span className="text-foreground">{i}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </RevealSection>
     </section>
   );
 }
@@ -916,38 +973,40 @@ function Contact() {
       id="contact"
       className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-28"
     >
-      <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card/50 backdrop-blur-sm p-8 sm:p-14">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-50%] right-[-20%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[100px]" />
-          <div className="absolute bottom-[-30%] left-[-10%] w-[400px] h-[400px] rounded-full bg-accent/5 blur-[80px]" />
-        </div>
-        <div className="relative">
-          <SectionLabel>05 — Contact</SectionLabel>
-          <h2 className="mt-4 font-display text-3xl sm:text-5xl font-bold tracking-tight max-w-2xl">
-            Have a project in mind?{" "}
-            <span className="text-gradient">Let&apos;s talk.</span>
-          </h2>
-          <p className="mt-5 max-w-xl text-muted-foreground leading-relaxed">
-            Whether it&apos;s an IoT prototype, a full-stack build, or a mobile
-            app — I&apos;m happy to chat. Reach me on any of these.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <ContactLink
-              href="https://www.linkedin.com/in/rocky-alessandro-66972535a/"
-              label="LinkedIn"
-            />
-            <ContactLink
-              href="https://github.com/rockhubzz"
-              label="GitHub"
-            />
-            <ContactLink
-              href="mailto:rockyalessandro7@gmail.com"
-              label="Email"
-              muted
-            />
+      <RevealSection>
+        <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card/50 backdrop-blur-sm p-8 sm:p-14">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-[-50%] right-[-20%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[100px]" />
+            <div className="absolute bottom-[-30%] left-[-10%] w-[400px] h-[400px] rounded-full bg-accent/5 blur-[80px]" />
+          </div>
+          <div className="relative">
+            <SectionLabel>05 — Contact</SectionLabel>
+            <h2 className="mt-4 font-display text-3xl sm:text-5xl font-bold tracking-tight max-w-2xl">
+              Have a project in mind?{" "}
+              <span className="text-gradient">Let&apos;s talk.</span>
+            </h2>
+            <p className="mt-5 max-w-xl text-muted-foreground leading-relaxed">
+              Whether it&apos;s an IoT prototype, a full-stack build, or a mobile
+              app — I&apos;m happy to chat. Reach me on any of these.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ContactLink
+                href="https://www.linkedin.com/in/rocky-alessandro-66972535a/"
+                label="LinkedIn"
+              />
+              <ContactLink
+                href="https://github.com/rockhubzz"
+                label="GitHub"
+              />
+              <ContactLink
+                href="mailto:rockyalessandro7@gmail.com"
+                label="Email"
+                muted
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </RevealSection>
     </section>
   );
 }
@@ -966,9 +1025,9 @@ function ContactLink({
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel="noreferrer"
-      className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all hover:-translate-y-0.5 ${
+      className={`contact-link inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium ${
         muted
-          ? "border border-border/60 bg-card/60 text-foreground hover:bg-card hover:border-border"
+          ? "border border-border/60 bg-card/60 text-foreground hover:bg-card hover:border-border hover:shadow-md"
           : "bg-gradient-to-r from-primary to-amber-500 text-primary-foreground hover:shadow-lg hover:shadow-primary/25"
       }`}
     >
@@ -980,6 +1039,7 @@ function ContactLink({
         fill="none"
         stroke="currentColor"
         strokeWidth="2.5"
+        className="transition-transform duration-200 group-hover:translate-x-0.5"
       >
         <path
           d="M7 17L17 7M9 7h8v8"
@@ -1005,11 +1065,11 @@ function Footer() {
   useEffect(() => setYear(new Date().getFullYear()), []);
   return (
     <footer className="border-t border-border/30">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-10 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 text-sm text-muted-foreground">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-10 flex flex-col sm:grid sm:grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
         <span className="truncate">
           © {year ?? ""} Rocky Alessandro Kristanto
         </span>
-        <span className="font-mono text-xs opacity-60">
+        <span className="footer-link font-mono text-xs opacity-60 cursor-default">
           We walk the talk, not only talk the talk.
         </span>
       </div>
@@ -1047,7 +1107,7 @@ function ThemeToggle() {
       <span className="absolute inset-0 rounded-full bg-primary/20 animate-[theme-pulse-ring_2s_ease-out_infinite] group-hover:animate-none" />
       {/* button */}
       <span
-        className={`relative flex h-12 w-12 items-center justify-center rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-110 transition-all duration-300 ${
+        className={`relative flex h-12 w-12 items-center justify-center rounded-full border border-border/40 bg-card/80 backdrop-blur-xl shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-110 active:scale-95 transition-all duration-300 ${
           animating ? "scale-90" : ""
         }`}
       >
