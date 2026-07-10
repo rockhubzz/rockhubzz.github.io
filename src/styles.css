@@ -35,43 +35,65 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.16 0.02 260);
+  --background: oklch(0.14 0.02 260);
   --foreground: oklch(0.97 0.01 250);
-  --card: oklch(0.20 0.025 260);
+  --card: oklch(0.18 0.025 260);
   --card-foreground: oklch(0.97 0.01 250);
-  --popover: oklch(0.20 0.025 260);
+  --popover: oklch(0.18 0.025 260);
   --popover-foreground: oklch(0.97 0.01 250);
   --primary: oklch(0.82 0.17 85);
-  --primary-foreground: oklch(0.18 0.03 260);
-  --secondary: oklch(0.26 0.03 260);
+  --primary-foreground: oklch(0.16 0.03 260);
+  --secondary: oklch(0.22 0.025 260);
   --secondary-foreground: oklch(0.97 0.01 250);
-  --muted: oklch(0.24 0.025 260);
-  --muted-foreground: oklch(0.72 0.02 260);
+  --muted: oklch(0.22 0.025 260);
+  --muted-foreground: oklch(0.65 0.02 260);
   --accent: oklch(0.72 0.15 200);
   --accent-foreground: oklch(0.15 0.02 260);
   --destructive: oklch(0.65 0.22 25);
   --destructive-foreground: oklch(0.97 0.01 250);
-  --border: oklch(0.30 0.02 260 / 60%);
-  --input: oklch(0.28 0.02 260);
+  --border: oklch(0.28 0.02 260 / 60%);
+  --input: oklch(0.25 0.02 260);
   --ring: oklch(0.82 0.17 85);
 
-  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, oklch(0.35 0.12 260 / 0.6), transparent 70%),
-                   radial-gradient(ellipse 50% 40% at 80% 20%, oklch(0.55 0.18 85 / 0.25), transparent 70%);
-  --gradient-text: linear-gradient(135deg, oklch(0.97 0.01 250), oklch(0.82 0.17 85));
-  --shadow-glow: 0 20px 60px -20px oklch(0.82 0.17 85 / 0.35);
-  --grid-color: oklch(0.30 0.02 260 / 0.35);
+  --gradient-hero: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      oklch(0.35 0.12 260 / 0.5),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 80% 20%,
+      oklch(0.55 0.18 85 / 0.2),
+      transparent 70%
+    );
+  --gradient-text: linear-gradient(
+    135deg,
+    oklch(0.97 0.01 250),
+    oklch(0.82 0.17 85)
+  );
+  --shadow-glow: 0 20px 60px -20px oklch(0.82 0.17 85 / 0.3);
+  --grid-color: oklch(0.28 0.02 260 / 0.3);
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04";
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
 }
 
 @utility text-gradient {
@@ -86,13 +108,67 @@
 }
 
 @utility grid-bg {
-  background-image:
-    linear-gradient(var(--grid-color) 1px, transparent 1px),
+  background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 80%);
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 30%,
+    black 30%,
+    transparent 80%
+  );
 }
 
 @utility card-hover {
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+@keyframes orb-float-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -40px) scale(1.05);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  75% {
+    transform: translate(40px, 30px) scale(1.02);
+  }
+}
+
+@keyframes orb-float-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-40px, 30px) scale(1.08);
+  }
+  66% {
+    transform: translate(20px, -20px) scale(0.92);
+  }
+}
+
+@keyframes orb-float-3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(25px, -35px) scale(1.06);
+  }
+}
+
+@utility animate-orb-1 {
+  animation: orb-float-1 12s ease-in-out infinite;
+}
+
+@utility animate-orb-2 {
+  animation: orb-float-2 15s ease-in-out infinite;
+}
+
+@utility animate-orb-3 {
+  animation: orb-float-3 10s ease-in-out infinite;
 }
