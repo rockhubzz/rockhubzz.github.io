@@ -371,7 +371,7 @@ function Hero() {
   }, []);
 
   return (
-    <section id="top" className="relative overflow-hidden min-h-[85vh] flex items-center">
+    <section id="top" className="relative overflow-hidden min-h-[70vh] flex items-center">
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-orb-1" />
@@ -386,7 +386,65 @@ function Hero() {
       {/* Grid overlay */}
       <div className="absolute inset-0 grid-bg pointer-events-none opacity-40" />
 
-      <div className="relative mx-auto max-w-6xl px-5 sm:px-8 py-16 sm:py-24">
+      {/* Floating dev tool icons */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* VS Code */}
+        <svg className="floating-icon text-primary/15" style={{ top: "12%", left: "8%", width: 40, height: 40, "--float-anim": "float-icon-1", "--float-dur": "14s", "--float-delay": "0.2s" } as React.CSSProperties} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.583 2.427L9.292 10.72l-3.542-2.79L4.167 7.6l-1.75.583L6.5 12l-4.083 3.817 1.75.583 1.583-3.33 3.542 2.791 8.292-8.292L15.25 2.427zM9.292 13.28l8.292 8.292V19.5l-8.292-6.22z"/>
+        </svg>
+        {/* Terminal */}
+        <svg className="floating-icon text-accent/15" style={{ top: "20%", right: "12%", width: 36, height: 36, "--float-anim": "float-icon-2", "--float-dur": "12s", "--float-delay": "0.5s" } as React.CSSProperties} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <rect x="2" y="3" width="20" height="18" rx="2"/>
+          <polyline points="7 8 10 11 7 14"/>
+          <line x1="12" y1="14" x2="17" y2="14"/>
+        </svg>
+        {/* Git branch */}
+        <svg className="floating-icon text-primary/12" style={{ top: "55%", left: "5%", width: 32, height: 32, "--float-anim": "float-icon-3", "--float-dur": "16s", "--float-delay": "0.8s" } as React.CSSProperties} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="6" r="2"/>
+          <circle cx="6" cy="18" r="2"/>
+          <circle cx="18" cy="18" r="2"/>
+          <path d="M12 8v4c0 2-2 4-4 4"/>
+          <path d="M12 12c2 0 4 2 4 4"/>
+        </svg>
+        {/* React */}
+        <svg className="floating-icon text-accent/12" style={{ top: "65%", right: "8%", width: 38, height: 38, "--float-anim": "float-icon-4", "--float-dur": "18s", "--float-delay": "1s" } as React.CSSProperties} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+          <circle cx="12" cy="12" r="2.5"/>
+          <ellipse cx="12" cy="12" rx="10" ry="4"/>
+          <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/>
+          <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>
+        </svg>
+        {/* Node.js */}
+        <svg className="floating-icon text-primary/10" style={{ top: "38%", right: "4%", width: 34, height: 34, "--float-anim": "float-icon-5", "--float-dur": "15s", "--float-delay": "0.3s" } as React.CSSProperties} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.18l6.5 3.61L12 11.4 5.5 7.8 12 4.18zM5 8.82l6 3.33v6.7l-6-3.33V8.82zm8 10.03v-6.7l6-3.33v6.7l-6 3.33z"/>
+        </svg>
+        {/* Docker */}
+        <svg className="floating-icon text-primary/10" style={{ top: "80%", left: "15%", width: 30, height: 30, "--float-anim": "float-icon-2", "--float-dur": "13s", "--float-delay": "1.2s" } as React.CSSProperties} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.186.186 0 00-.185.186v1.887c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.186.186 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.186v1.887c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.186v1.887c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.186.186 0 00-.185-.186H5.136a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.186v1.887c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.687 11.687 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288"/>
+        </svg>
+        {/* Python */}
+        <svg className="floating-icon text-accent/10" style={{ top: "45%", left: "18%", width: 32, height: 32, "--float-anim": "float-icon-1", "--float-dur": "17s", "--float-delay": "0.6s" } as React.CSSProperties} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.996 0C5.372 0 5.76 2.962 5.76 2.962l.003 3.08h6.344v.927H3.6S0 5.689 0 12.018c0 6.328 3.149 6.107 3.149 6.107h1.88v-2.93s-.102-3.149 3.093-3.149h5.335s2.99.049 2.99-2.888V3.189S16.662 0 11.996 0zM8.718 1.842a1.053 1.053 0 011.053 1.053 1.053 1.053 0 01-1.053 1.053A1.053 1.053 0 017.665 2.895a1.053 1.053 0 011.053-1.053z"/>
+          <path d="M12.004 24c6.624 0 6.236-2.962 6.236-2.962l-.003-3.08h-6.344v-.927H20.4S24 18.311 24 11.982c0-6.328-3.149-6.107-3.149-6.107h-1.88v2.93s.102 3.149-3.093 3.149H10.543s-2.99-.049-2.99 2.888v5.047S7.338 24 12.004 24zm3.278-1.842a1.053 1.053 0 01-1.053-1.053 1.053 1.053 0 011.053-1.053 1.053 1.053 0 011.053 1.053 1.053 1.053 0 01-1.053 1.053z"/>
+        </svg>
+        {/* Brackets / code */}
+        <svg className="floating-icon text-primary/10" style={{ top: "30%", left: "35%", width: 28, height: 28, "--float-anim": "float-icon-3", "--float-dur": "14s", "--float-delay": "1.5s" } as React.CSSProperties} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>
+        {/* Database */}
+        <svg className="floating-icon text-accent/10" style={{ top: "75%", right: "20%", width: 28, height: 28, "--float-anim": "float-icon-5", "--float-dur": "16s", "--float-delay": "0.9s" } as React.CSSProperties} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <ellipse cx="12" cy="5" rx="8" ry="3"/>
+          <path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/>
+          <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/>
+        </svg>
+        {/* Cog / settings */}
+        <svg className="floating-icon text-primary/8" style={{ top: "15%", left: "50%", width: 26, height: 26, "--float-anim": "float-icon-4", "--float-dur": "19s", "--float-delay": "2s" } as React.CSSProperties} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-5 sm:px-8 py-12 sm:py-16">
         <div className="hero-stagger flex flex-col items-start">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-mono text-primary backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
@@ -433,7 +491,7 @@ function Hero() {
         </div>
 
         {/* Stats */}
-        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 max-w-3xl">
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 max-w-3xl">
           {[
             { k: "35+", v: "Public Repos" },
             { k: "7+", v: "Languages" },
@@ -457,10 +515,15 @@ function Hero() {
 
 function About() {
   return (
-    <section id="about" className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
+    <section id="about" className="relative mx-auto max-w-6xl px-5 sm:px-8 py-14 sm:py-16">
+      <div className="section-bg">
+        <div className="blob about-blob-1" />
+        <div className="blob about-blob-2" />
+        <div className="section-grid-pattern" style={{ "--gx": "70%", "--gy": "30%" } as React.CSSProperties} />
+      </div>
       <RevealSection>
         <SectionLabel>01 — About</SectionLabel>
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="mt-6 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">
               Builder across the whole stack — hardware to interface.
@@ -540,8 +603,13 @@ function Education() {
   return (
     <section
       id="education"
-      className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24"
+      className="relative mx-auto max-w-6xl px-5 sm:px-8 py-14 sm:py-16"
     >
+      <div className="section-bg">
+        <div className="blob edu-blob-1" />
+        <div className="blob edu-blob-2" />
+        <div className="section-grid-pattern" style={{ "--gx": "30%", "--gy": "60%" } as React.CSSProperties} />
+      </div>
       <RevealSection>
         <SectionLabel>02 — Education</SectionLabel>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
@@ -644,8 +712,13 @@ function Projects() {
   return (
     <section
       id="work"
-      className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24"
+      className="relative mx-auto max-w-6xl px-5 sm:px-8 py-14 sm:py-16"
     >
+      <div className="section-bg">
+        <div className="blob projects-blob-1" />
+        <div className="blob projects-blob-2" />
+        <div className="section-grid-pattern" style={{ "--gx": "60%", "--gy": "40%" } as React.CSSProperties} />
+      </div>
       <RevealSection>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -927,8 +1000,13 @@ function Stack() {
   return (
     <section
       id="stack"
-      className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24"
+      className="relative mx-auto max-w-6xl px-5 sm:px-8 py-14 sm:py-16"
     >
+      <div className="section-bg">
+        <div className="blob stack-blob-1" />
+        <div className="blob stack-blob-2" />
+        <div className="section-grid-pattern" style={{ "--gx": "40%", "--gy": "50%" } as React.CSSProperties} />
+      </div>
       <RevealSection>
         <SectionLabel>04 — Stack</SectionLabel>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight">
@@ -971,8 +1049,13 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-28"
+      className="relative mx-auto max-w-6xl px-5 sm:px-8 py-14 sm:py-16"
     >
+      <div className="section-bg">
+        <div className="blob contact-blob-1" />
+        <div className="blob contact-blob-2" />
+        <div className="section-grid-pattern" style={{ "--gx": "50%", "--gy": "40%" } as React.CSSProperties} />
+      </div>
       <RevealSection>
         <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card/50 backdrop-blur-sm p-8 sm:p-14">
           <div className="absolute inset-0 pointer-events-none">
@@ -1064,7 +1147,10 @@ function Footer() {
   const [year, setYear] = useState<number | null>(null);
   useEffect(() => setYear(new Date().getFullYear()), []);
   return (
-    <footer className="border-t border-border/30">
+    <footer className="relative border-t border-border/30 overflow-hidden">
+      <div className="section-bg">
+        <div className="blob footer-blob" />
+      </div>
       <div className="mx-auto max-w-6xl px-5 sm:px-8 py-10 flex flex-col sm:grid sm:grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
         <span className="truncate">
           © {year ?? ""} Rocky Alessandro Kristanto
