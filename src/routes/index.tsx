@@ -111,9 +111,13 @@ function Nav() {
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-6xl px-5 sm:px-8 h-16 grid grid-cols-[minmax(0,1fr)_auto] items-center">
         <a href="#top" className="flex min-w-0 items-center gap-2 font-display font-semibold">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
-            R
-          </span>
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary">
+            <img
+              src="/R-white.ico"
+              alt="Rocky Alessandro Kristanto"
+              className="h-5 w-5"
+            />
+          </span>          
           <span className="truncate">Rocky Alessandro</span>
         </a>
         <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
