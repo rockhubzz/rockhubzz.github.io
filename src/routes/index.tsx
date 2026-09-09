@@ -177,16 +177,15 @@ function Nav() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open ]);
+  }, [open]);
 
   const close = useCallback(() => setOpen(false), []);
 
   return (
     <>
       <div
-        className={`fixed inset-x-0 top-0 z-20 transition-colors duration-200 ${
-          scrolled && !open ? "bg-[#000000]" : "bg-transparent"
-        }`}
+        className={`fixed inset-x-0 top-0 z-20 transition-colors duration-200 ${scrolled && !open ? "bg-[#000000]" : "bg-transparent"
+          }`}
       >
         <header className="nav-studio mx-auto w-full max-w-[60rem]">
           <a href="#top" className="studio-mark" aria-label="Back to top">
@@ -278,9 +277,10 @@ function Hero() {
             {/* Profile photo placeholder — swap inner with:
                 <img src="/profile.jpg" alt="Rocky Alessandro Kristanto" className="hero-avatar-img" /> */}
             <div className="hero-avatar" role="img" aria-label="Profile photo placeholder">
-              <span aria-hidden="true" className="hero-avatar-initials">
+              {/* <span aria-hidden="true" className="hero-avatar-initials">
                 RK
-              </span>
+              </span> */}
+              <img src="/profile.jpg" alt="Rocky Alessandro Kristanto" className="hero-avatar-img" />
               <span aria-hidden="true" className="hero-avatar-status" />
             </div>
             <div className="flex flex-col items-start gap-2">
