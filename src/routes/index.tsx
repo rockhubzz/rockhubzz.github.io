@@ -143,9 +143,9 @@ function Reveal({
 
 function Index() {
   return (
-    <div className="min-h-screen bg-[#000000] text-[#ffffff]">
+    <div className="page-root min-h-screen bg-[#000000] text-[#ffffff]">
       <Nav />
-      <main>
+      <main className="page-main">
         <Hero />
         <Work />
         <About />
@@ -270,8 +270,19 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="hero-stage">
-      <div className="mx-auto w-full max-w-[60rem] px-4 pt-36 sm:px-6 sm:pt-44">
+    <section id="top" className="hero-stage relative overflow-hidden">
+      {/* Background art — pure CSS, fills the empty stage */}
+      <div aria-hidden="true" className="hero-bg">
+        <div className="hero-grid" />
+        <div className="hero-glow hero-glow-accent" />
+        <div className="hero-glow hero-glow-white" />
+        <div className="hero-ring" />
+        <span className="hero-ghost">R/</span>
+        <span className="hero-plus hero-plus-1">+</span>
+        <span className="hero-plus hero-plus-2">+</span>
+        <span className="hero-plus hero-plus-3">+</span>
+      </div>
+      <div className="relative z-10 mx-auto w-full max-w-[60rem] px-4 pt-36 sm:px-6 sm:pt-44">
         <div className="hero-stagger flex flex-col items-start">
           <div className="hero-profile-row">
             {/* Profile photo placeholder — swap inner with:
@@ -284,7 +295,7 @@ function Hero() {
               <span aria-hidden="true" className="hero-avatar-status" />
             </div>
             <div className="flex flex-col items-start gap-2">
-              <span className="badge">Portfolio — Malang, ID</span>
+              <span className="text-lg font-bold tracking-tight text-white">Rocky Alessandro Kristanto</span>
               <span className="hero-available">
                 <span aria-hidden="true" className="hero-available-dot" />
                 Open to work
@@ -311,7 +322,7 @@ function Hero() {
           </div>
         </div>
       </div>
-      <div className="mx-auto w-full max-w-[60rem] px-4 pb-12 sm:px-6">
+      <div className="relative z-10 mx-auto w-full max-w-[60rem] px-4 pb-12 sm:px-6">
         <dl className="hero-stats mt-16">
           {[
             ["35+", "Public repos"],
