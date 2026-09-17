@@ -303,9 +303,7 @@ function Hero() {
             </div>
           </div>
           <h1 className="hero-display mt-8">
-            Code isn&apos;t everything.
-            <br />
-            Results matter.
+            about raki.
           </h1>
           <p className="mt-8 max-w-2xl text-[1.25rem] leading-relaxed text-[#999999]">
             I&apos;m Rocky Alessandro Kristanto — full-stack, mobile, and IoT developer. I build

@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "start": "node .output/server/index.mjs"
+    "deploy": "npm run build && wrangler deploy --config .output/server/wrangler.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
