@@ -1,9 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  BookOpen,
+  Briefcase,
+  Code2,
+  Cpu,
+  Github,
+  GraduationCap,
+  Linkedin,
+  Mail,
+  MapPin,
+  Moon,
+  Phone,
+  Send,
+  Smartphone,
+  Sun,
+  Calendar,
+  Globe,
+  X,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: VCardPage,
 });
+
+/* ----------------------------------- data ---------------------------------- */
 
 type Project = {
   name: string;
@@ -18,8 +39,8 @@ const PROJECTS: Project[] = [
   {
     name: "Fire Hydrant",
     description:
-      "IoT fire-hydrant monitoring platform with a live web dashboard for pressure, flow, and status telemetry. Full-stack from embedded firmware to a polished React frontend.",
-    tags: ["TypeScript", "IoT", "React", "Next.js"],
+      "IoT fire-hydrant monitoring platform with live dashboard for pressure, flow, and status telemetry. Full-stack from firmware to React frontend.",
+    tags: ["TypeScript", "IoT", "React"],
     href: "https://github.com/rockhubzz/fire-hydrant",
     demo: "https://fire-hydrant-fawn.vercel.app",
     screenshot: "/screenshots/fire-hydrant.png",
@@ -27,8 +48,8 @@ const PROJECTS: Project[] = [
   {
     name: "MyMBG — Web",
     description:
-      "Full-stack kitchen operations system for the Makan Bergizi Gratis program: ingredients, recipes, production tracking, and distribution management.",
-    tags: ["TypeScript", "React", "Next.js", "Postgres"],
+      "Kitchen operations system for Makan Bergizi Gratis: ingredients, recipes, production tracking, and distribution management.",
+    tags: ["TypeScript", "React", "Postgres"],
     href: "https://github.com/rockhubzz/MyMBG-web",
     demo: "https://my-mbg.vercel.app",
     screenshot: "/screenshots/my-mbg-web.png",
@@ -36,7 +57,7 @@ const PROJECTS: Project[] = [
   {
     name: "Jawara",
     description:
-      "Cross-platform mobile app to manage housing estate residents records built with Flutter, backed by a PHP service layer.",
+      "Cross-platform mobile app for housing estate resident records, built with Flutter and backed by PHP services.",
     tags: ["Dart", "Flutter", "PHP"],
     href: "https://github.com/rockhubzz/Jawara",
     screenshot: "/screenshots/jawara.png",
@@ -44,7 +65,7 @@ const PROJECTS: Project[] = [
   {
     name: "Internify",
     description:
-      "A web application for internship management — styled with CSS and designed for clarity.",
+      "Web application for internship management with a clean, clarity-focused interface.",
     tags: ["HTML", "CSS", "Web"],
     href: "https://github.com/rockhubzz/Internify",
     screenshot: "/screenshots/internify.png",
@@ -52,631 +73,717 @@ const PROJECTS: Project[] = [
   {
     name: "Face Age Detection",
     description:
-      "On-device face age detection experiment for mobile — computer vision with a lightweight pipeline.",
-    tags: ["C++", "ML", "Flutter", "Dart"],
+      "On-device face age detection experiment for mobile with a lightweight vision pipeline.",
+    tags: ["C++", "ML", "Dart"],
     href: "https://github.com/rockhubzz/mobile_faceage_detection",
     screenshot: "/screenshots/mobile_faceage_detection.png",
   },
   {
-    name: "Sistem Tata Tertib Mahasiswa",
-    description: "PHP based system for tracking student violations and compensations.",
-    tags: ["PHP", "SQL Server", "Web"],
+    name: "Sistem Tata Tertib",
+    description:
+      "PHP based system for tracking student violations and compensations.",
+    tags: ["PHP", "SQL", "Web"],
     href: "https://github.com/rockhubzz/PBL_SistemTataTertib",
     screenshot: "/screenshots/sistem-tata-tertib.png",
   },
 ];
 
-const STACK = [
-  { group: "Languages", items: ["TypeScript", "Dart", "C#", "C++", "Python", "PHP", "Java"] },
-  { group: "Frontend", items: ["React", "Next.js", "Flutter", "Tailwind CSS", "Vite"] },
-  { group: "Backend", items: [".NET", "Laravel", "Node.js", "REST APIs"] },
-  { group: "Systems", items: ["IoT", "MQTT", "Embedded C++", "Postgres", "MySQL"] },
+const SERVICES = [
+  {
+    icon: Code2,
+    title: "Full-Stack Web",
+    text: "TypeScript, React, Next.js with .NET, Laravel, or Node APIs and Postgres/MySQL.",
+  },
+  {
+    icon: Smartphone,
+    title: "Mobile Apps",
+    text: "Flutter and Dart for cross-platform builds, from resident records to vision experiments.",
+  },
+  {
+    icon: Cpu,
+    title: "IoT Systems",
+    text: "Embedded firmware, MQTT transport, telemetry pipelines, and live dashboards.",
+  },
+  {
+    icon: Globe,
+    title: "Interfaces",
+    text: "Calm, content-first UI with clear hierarchy and subtle motion under 300ms.",
+  },
+];
+
+const SKILLS = [
+  { name: "TypeScript / React", level: 90 },
+  { name: "Flutter / Dart", level: 85 },
+  { name: "Backend (.NET / Laravel / Node)", level: 80 },
+  { name: "IoT / MQTT / Embedded C++", level: 75 },
+];
+
+const STACK_TABLE = [
+  { group: "Languages", items: "TypeScript, Dart, C#, C++, Python, PHP, Java" },
+  { group: "Frontend", items: "React, Next.js, Flutter, Tailwind, Vite" },
+  { group: "Backend", items: ".NET, Laravel, Node.js, REST APIs" },
+  { group: "Systems", items: "IoT, MQTT, Embedded C++, Postgres, MySQL" },
 ];
 
 const FAQS = [
   {
     q: "What do you actually do?",
-    a: "Full-stack, mobile, and IoT. I take systems end-to-end — firmware and sensors, message brokers, APIs, and a calm UI on top. Recent work: hydrant telemetry, kitchen operations for Makan Bergizi Gratis, Flutter apps.",
+    a: "Full-stack, mobile, and IoT. I take systems end-to-end — firmware and sensors, brokers, APIs, and a calm UI on top.",
   },
   {
     q: "Are you open to internships or freelance?",
-    a: "Yes. I'm based in Malang, East Java and open to internships, collaborations, and small freelance builds — especially IoT dashboards, full-stack web apps, and Flutter.",
+    a: "Yes. Based in Malang, East Java. Open to internships, collaborations, and small freelance builds.",
   },
   {
     q: "What is your preferred stack?",
-    a: "TypeScript + React / Next.js on the web, Flutter + Dart on mobile, .NET / Laravel / Node on the backend, Postgres or MySQL for data, MQTT for IoT transport.",
+    a: "TypeScript + React/Next.js on web, Flutter + Dart on mobile, .NET/Laravel/Node on backend, Postgres or MySQL, MQTT for IoT.",
   },
   {
-    q: "How do we start working together?",
-    a: "Send a short brief — what you're building, timeline, and links. I reply with scope, milestones, and what I need from you. Email works best.",
+    q: "How do we start?",
+    a: "Send a short brief — scope, timeline, links. I reply with milestones and what I need from you. Email works best.",
   },
 ];
 
-const NAV_LINKS = [
-  { href: "#work", label: "Portfolio" },
-  { href: "#about", label: "About" },
-  { href: "#stack", label: "Stack" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#contact", label: "Contact" },
-];
+const FILTERS = ["All", "TypeScript", "Dart", "C++", "PHP", "React"];
+const TABS = [
+  { id: "about", label: "About" },
+  { id: "resume", label: "Resume" },
+  { id: "portfolio", label: "Portfolio" },
+  { id: "contact", label: "Contact" },
+] as const;
 
-/* ---------------------------------- hooks --------------------------------- */
+type TabId = (typeof TABS)[number]["id"];
 
-function useReveal<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
+/* ----------------------------------- page ---------------------------------- */
+
+function useTheme() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add("revealed");
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    try {
+      const stored = localStorage.getItem("vcard-theme");
+      if (stored === "dark" || stored === "light") {
+        setTheme(stored);
+        return;
+      }
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        setTheme("dark");
+      }
+    } catch {
+      /* storage unavailable — keep light default */
+    }
   }, []);
-  return ref;
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    try {
+      localStorage.setItem("vcard-theme", theme);
+    } catch {
+      /* storage unavailable */
+    }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#17191c" : "#e8eaed");
+  }, [theme]);
+
+  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
 }
 
-function Reveal({
-  children,
-  className = "",
-  delay = 0,
+function VCardPage() {
+  const [tab, setTab] = useState<TabId>("about");
+  const { theme, toggle } = useTheme();
+
+  return (
+    <div className="vcard-page">
+      <div className="vcard-container">
+        <div className="vcard-layout">
+          <Sidebar onNavigate={setTab} />
+          <main className="main">
+            <Nav active={tab} onChange={setTab} theme={theme} onToggleTheme={toggle} />
+            <div className="main-inner">
+              {tab === "about" && <AboutPanel onNavigate={setTab} />}
+              {tab === "resume" && <ResumePanel />}
+              {tab === "portfolio" && <PortfolioPanel />}
+              {tab === "contact" && <ContactPanel />}
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------------- sidebar --------------------------------- */
+
+function Sidebar({ onNavigate }: { onNavigate: (t: TabId) => void }) {
+  return (
+    <aside className="sidebar">
+      <div className="avatar-wrap">
+        <img
+          src="/profile.jpg"
+          alt="Rocky Alessandro Kristanto"
+          className="avatar"
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+            const sib = e.currentTarget.nextElementSibling as HTMLElement | null;
+            if (sib) sib.style.display = "grid";
+          }}
+        />
+        <span className="avatar-fallback" style={{ display: "none" }}>
+          RK
+        </span>
+      </div>
+
+      <h1 className="sidebar-name">Rocky Alessandro Kristanto</h1>
+      <div className="sidebar-role">
+        <span className="badge badge-dark">Full-Stack · Mobile · IoT</span>
+      </div>
+
+      <div className="sidebar-divider" />
+
+      <ul className="contact-list">
+        <li className="contact-item">
+          <span className="contact-icon">
+            <Mail size={20} />
+          </span>
+          <div>
+            <div className="contact-label">Email</div>
+            <div className="contact-value">
+              <a href="mailto:rockyalessandro7@gmail.com">rockyalessandro7@gmail.com</a>
+            </div>
+          </div>
+        </li>
+        <li className="contact-item">
+          <span className="contact-icon">
+            <Phone size={20} />
+          </span>
+          <div>
+            <div className="contact-label">Phone</div>
+            <div className="contact-value">Available on request</div>
+          </div>
+        </li>
+        <li className="contact-item">
+          <span className="contact-icon">
+            <MapPin size={20} />
+          </span>
+          <div>
+            <div className="contact-label">Location</div>
+            <div className="contact-value">Malang, East Java</div>
+          </div>
+        </li>
+        <li className="contact-item">
+          <span className="contact-icon">
+            <Calendar size={20} />
+          </span>
+          <div>
+            <div className="contact-label">Status</div>
+            <div className="contact-value">Open to internships</div>
+          </div>
+        </li>
+      </ul>
+
+      <div className="social-row">
+        <a
+          className="social-btn"
+          href="https://github.com/rockhubzz"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="GitHub"
+        >
+          <Github size={20} />
+        </a>
+        <a
+          className="social-btn"
+          href="https://www.linkedin.com/in/rocky-alessandro-66972535a/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="LinkedIn"
+        >
+          <Linkedin size={20} />
+        </a>
+        <a className="social-btn" href="mailto:rockyalessandro7@gmail.com" aria-label="Email">
+          <Mail size={20} />
+        </a>
+      </div>
+
+      <div style={{ marginTop: 25 }}>
+        <button className="btn-primary" style={{ width: "100%" }} onClick={() => onNavigate("contact")}>
+          <Send size={16} /> Get in touch
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+/* ----------------------------------- nav ----------------------------------- */
+
+function Nav({
+  active,
+  onChange,
+  theme,
+  onToggleTheme,
 }: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
+  active: TabId;
+  onChange: (t: TabId) => void;
+  theme: "light" | "dark";
+  onToggleTheme: () => void;
 }) {
-  const ref = useReveal<HTMLDivElement>();
+  const dark = theme === "dark";
   return (
-    <div ref={ref} className={`reveal-section ${className}`} style={{ transitionDelay: `${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
-
-/* ---------------------------------- page ---------------------------------- */
-
-function Index() {
-  return (
-    <div className="page-root min-h-screen bg-[#000000] text-[#ffffff]">
-      <Nav />
-      <main className="page-main">
-        <Hero />
-        <Work />
-        <About />
-        <Knowledge />
-        <Faq />
-        <Cta />
-      </main>
-      <Footer />
-    </div>
-  );
-}
-
-/* ------------------------------- navigation ------------------------------- */
-/* walaszczyk: minimal top bar — mark left, centered links, dash menu right.   */
-
-function Nav() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  const close = useCallback(() => setOpen(false), []);
-
-  return (
-    <>
-      <div
-        className={`fixed inset-x-0 top-0 z-20 transition-colors duration-200 ${scrolled && !open ? "bg-[#000000]" : "bg-transparent"
-          }`}
-      >
-        <header className="nav-studio mx-auto w-full max-w-[60rem]">
-          <a href="#top" className="studio-mark" aria-label="Back to top">
-            R<span className="studio-mark-slash">/</span>
-          </a>
-
-          <nav className="hidden items-center gap-2 lg:flex" aria-label="Primary">
-            {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="nav-link text-sm">
-                {l.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <span className="hidden text-xs tracking-widest text-[#999999] uppercase sm:block">
-              Malang, ID
-            </span>
-            <button
-              onClick={() => setOpen((v) => !v)}
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              className="menu-dash"
-            >
-              <span className={`menu-dash-bar ${open ? "menu-dash-open-top" : ""}`} />
-              <span className={`menu-dash-bar ${open ? "menu-dash-open-bottom" : ""}`} />
-            </button>
-          </div>
-        </header>
-        {scrolled && !open && <div className="section-divider" />}
-      </div>
-
-      {open && (
-        <div className="menu-overlay" role="dialog" aria-modal="true" aria-label="Site menu">
-          <nav className="mobile-menu-open mx-auto flex w-full max-w-[60rem] flex-col px-4 pt-28 pb-12 sm:px-6">
-            {NAV_LINKS.map((l, i) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={close}
-                className="mobile-menu-item menu-overlay-link"
-                style={{ animationDelay: `${0.05 + i * 0.05}s` }}
-              >
-                <span className="menu-overlay-index">0{i + 1}</span>
-                {l.label}
-              </a>
-            ))}
-            <div className="mobile-menu-item mt-12 flex flex-wrap gap-4" style={{ animationDelay: "0.3s" }}>
-              <a href="#work" onClick={close} className="btn-pill-light">
-                View work <span aria-hidden="true">→</span>
-              </a>
-              <a href="#contact" onClick={close} className="btn-ghost">
-                Get in touch
-              </a>
-            </div>
-            <div className="mobile-menu-item mt-12 flex flex-wrap gap-4 text-sm text-[#999999]">
-              <a href="https://github.com/rockhubzz" target="_blank" rel="noreferrer" className="menu-meta-link">
-                GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/rocky-alessandro-66972535a/"
-                target="_blank"
-                rel="noreferrer"
-                className="menu-meta-link"
-              >
-                LinkedIn
-              </a>
-              <a href="mailto:rockyalessandro7@gmail.com" className="menu-meta-link">
-                Email
-              </a>
-            </div>
-          </nav>
-        </div>
-      )}
-    </>
-  );
-}
-
-/* ---------------------------------- hero ---------------------------------- */
-/* walaszczyk hero: full-viewport dark stage, oversized 2-line display,        */
-/* supporting paragraph, pill CTA row, stat strip on a top border.             */
-
-function Hero() {
-  return (
-    <section id="top" className="hero-stage relative overflow-hidden">
-      {/* Background art — pure CSS, fills the empty stage */}
-      <div aria-hidden="true" className="hero-bg">
-        <div className="hero-grid" />
-        <div className="hero-glow hero-glow-accent" />
-        <div className="hero-glow hero-glow-white" />
-        <div className="hero-ring" />
-        <span className="hero-ghost">R/</span>
-        <span className="hero-plus hero-plus-1">+</span>
-        <span className="hero-plus hero-plus-2">+</span>
-        <span className="hero-plus hero-plus-3">+</span>
-      </div>
-      <div className="relative z-10 mx-auto w-full max-w-[60rem] px-4 pt-36 sm:px-6 sm:pt-44">
-        <div className="hero-stagger flex flex-col items-start">
-          <div className="hero-profile-row">
-            {/* Profile photo placeholder — swap inner with:
-                <img src="/profile.jpg" alt="Rocky Alessandro Kristanto" className="hero-avatar-img" /> */}
-            <div className="hero-avatar" role="img" aria-label="Profile photo placeholder">
-              {/* <span aria-hidden="true" className="hero-avatar-initials">
-                RK
-              </span> */}
-              <img src="/profile.jpg" alt="Rocky Alessandro Kristanto" className="hero-avatar-img" />
-              <span aria-hidden="true" className="hero-avatar-status" />
-            </div>
-            <div className="flex flex-col items-start gap-2">
-              <span className="text-lg font-bold tracking-tight text-white">Rocky Alessandro Kristanto</span>
-              <span className="hero-available">
-                <span aria-hidden="true" className="hero-available-dot" />
-                Open to work
-              </span>
-            </div>
-          </div>
-          <h1 className="hero-display mt-8">
-            about raki.
-          </h1>
-          <p className="mt-8 max-w-2xl text-[1.25rem] leading-relaxed text-[#999999]">
-            I&apos;m Rocky Alessandro Kristanto — full-stack, mobile, and IoT developer. I build
-            dedicated systems for real operations, from firmware and sensors to interfaces people
-            actually enjoy using.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <a href="#work" className="btn-pill-light">
-              View work <span aria-hidden="true">→</span>
-            </a>
-            <a href="#contact" className="btn-ghost">
-              Get in touch
-            </a>
-          </div>
-        </div>
-      </div>
-      <div className="relative z-10 mx-auto w-full max-w-[60rem] px-4 pb-12 sm:px-6">
-        <dl className="hero-stats mt-16">
-          {[
-            ["35+", "Public repos"],
-            ["9", "Languages"],
-            ["IoT → Web", "End-to-end"],
-            ["2026", "Latest release"],
-          ].map(([k, v]) => (
-            <div key={v}>
-              <dt className="sr-only">{v}</dt>
-              <dd className="text-2xl font-bold text-[#ffffff]">{k}</dd>
-              <dd className="mt-1 text-xs tracking-widest text-[#999999] uppercase">{v}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------------------------- work ---------------------------------- */
-
-function Work() {
-  const [filter, setFilter] = useState("all");
-  const tags = ["all", "TypeScript", "Dart", "C++", "PHP", "Python"];
-  const filtered = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(filter));
-
-  return (
-    <section id="work" className="section-shell">
-      <Reveal>
-        <p className="section-index">01 — Portfolio</p>
-        <div className="section-head-row">
-          <h2 className="section-title">
-            Things I&apos;ve built.
-          </h2>
-          <a
-            href="https://github.com/rockhubzz?tab=repositories"
-            target="_blank"
-            rel="noreferrer"
-            className="section-side-link"
+    <nav className="nav" aria-label="Primary">
+      <span className="nav-brand">
+        R<span style={{ color: "var(--text-muted)" }}>/</span>
+      </span>
+      <div className="nav-links" role="tablist" aria-label="Portfolio sections">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            role="tab"
+            aria-selected={active === t.id}
+            onClick={() => onChange(t.id)}
+            className={`nav-link ${active === t.id ? "active" : ""}`}
           >
-            All repositories →
-          </a>
-        </div>
-        <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter projects">
-          {tags.map((t) => (
-            <button
-              key={t}
-              onClick={() => setFilter(t)}
-              aria-pressed={filter === t}
-              className={`filter-pill ${filter === t ? "filter-pill-active" : "filter-pill-idle"}`}
-            >
-              {t === "all" ? "All" : t}
-            </button>
-          ))}
-        </div>
-      </Reveal>
-
-      <div className="mt-8 grid w-full gap-4 sm:grid-cols-2">
-        {filtered.map((p, i) => (
-          <Reveal key={p.name} delay={Math.min(i * 40, 200)}>
-            <article className="card work-card">
-              <div className="work-media">
-                {p.screenshot ? (
-                  <img
-                    src={p.screenshot}
-                    alt={`${p.name} screenshot`}
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <span className="text-xs text-[#999999]">Screenshot placeholder</span>
-                )}
-              </div>
-              <div className="flex flex-1 flex-col p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-xs tracking-widest text-[#999999] uppercase">
-                    0{i + 1} — {p.tags[0]}
-                  </span>
-                  {p.demo && <span className="badge badge-accent">Live</span>}
-                </div>
-                <h3 className="mt-4 text-lg font-bold">{p.name}</h3>
-                <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-[#999999]">
-                  {p.description}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {p.tags.map((t) => (
-                    <span key={t} className="badge">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-6 flex items-center gap-4 border-t border-[#333333] pt-4 text-sm">
-                  <a
-                    href={p.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-[#ffffff] transition-colors duration-200 hover:text-[#ff8a8a]"
-                  >
-                    Repository →
-                  </a>
-                  {p.demo && (
-                    <a
-                      href={p.demo}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[#999999] transition-colors duration-200 hover:text-[#ff8a8a]"
-                    >
-                      Demo →
-                    </a>
-                  )}
-                </div>
-              </div>
-            </article>
-          </Reveal>
+            {t.label}
+          </button>
         ))}
       </div>
-    </section>
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={onToggleTheme}
+        aria-pressed={dark}
+        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+        title={dark ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {dark ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
+    </nav>
   );
 }
 
-/* ---------------------------------- about --------------------------------- */
+/* ---------------------------------- about ---------------------------------- */
 
-function About() {
+function AboutPanel({ onNavigate }: { onNavigate: (t: TabId) => void }) {
+  const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="about" className="section-shell">
-      <Reveal>
-        <p className="section-index">02 — About</p>
-        <h2 className="section-title">
-          Builder across
-          <br />
-          the whole stack.
-        </h2>
-        <p className="section-lead">
-          I&apos;m a developer at Politeknik Negeri Malang who enjoys pulling the whole thread —
-          embedded firmware, message brokers, APIs, and a calm UI on top.
+    <section className="tab-panel">
+      <div className="page-head">
+        <h2 className="page-title">About Me</h2>
+        <div className="title-underline" />
+        <p className="lead">
+          I&apos;m Rocky Alessandro Kristanto — a developer at Politeknik Negeri Malang. I build
+          dedicated systems for real operations, from firmware and sensors to interfaces people
+          actually enjoy using. Code isn&apos;t everything. Results matter.
         </p>
-      </Reveal>
-
-      <div className="mt-12 grid w-full gap-4 sm:grid-cols-2">
-        <Reveal delay={80}>
-          <div className="card h-full p-6">
-            <p className="text-xs font-medium tracking-widest text-[#ff8a8a] uppercase">Currently</p>
-            <ul className="mt-4 space-y-4 text-sm">
-              <AboutRow label="Focus" value="IoT, Full-stack, Flutter" />
-              <AboutRow label="Learning" value="Distributed systems, Edge ML" />
-              <AboutRow label="Location" value="Malang, East Java" />
-              <AboutRow label="Open to" value="Internships & collaborations" />
-            </ul>
-          </div>
-        </Reveal>
-        <Reveal delay={120}>
-          <div className="card grid h-full grid-cols-2 gap-4 p-6">
-            {[
-              ["35+", "Open source repos across 9 languages"],
-              ["9", "Languages in active use"],
-              ["IoT → UI", "From firmware to polished interfaces"],
-              ["2026", "Latest release shipped"],
-            ].map(([k, v]) => (
-              <div key={k} className="stat-cell">
-                <div className="text-xl font-bold">{k}</div>
-                <div className="mt-1 text-xs leading-snug text-[#999999]">{v}</div>
-              </div>
-            ))}
-          </div>
-        </Reveal>
       </div>
 
-      <Reveal delay={80}>
-        <div className="mt-4 grid w-full gap-4 sm:grid-cols-2">
-          <div className="card edu-card">
-            <h3 className="text-lg font-bold">Politeknik Negeri Malang</h3>
-            <p className="mt-1 text-sm text-[#999999]">Diploma IV — Informatics Engineering</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Data Structures", "Web Programming", "Frameworks", "Mobile", "Databases", "OOP"].map(
-                (c) => (
-                  <span key={c} className="badge">
-                    {c}
-                  </span>
-                ),
-              )}
+      <h3 className="section-label">What I&apos;m doing</h3>
+      <div className="grid-2">
+        {SERVICES.map((s) => (
+          <div key={s.title} className="card service-card">
+            <span className="service-icon">
+              <s.icon size={20} />
+            </span>
+            <div>
+              <h3 className="card-title" style={{ fontSize: 24 }}>{s.title}</h3>
+              <p className="card-text">{s.text}</p>
             </div>
           </div>
-          <div className="card edu-card">
-            <h3 className="text-lg font-bold">Sarastya Agility</h3>
-            <p className="mt-1 text-sm text-[#999999]">Full Stack Developer Intern</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Backend Web", "Flutter", "Next.js", ".NET / C#", "CI/CD"].map((c) => (
-                <span key={c} className="badge">
-                  {c}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Reveal>
-    </section>
-  );
-}
-
-function AboutRow({ label, value }: { label: string; value: string }) {
-  return (
-    <li className="grid grid-cols-[5rem_minmax(0,1fr)] items-start gap-4">
-      <span className="text-[#999999]">{label}</span>
-      <span className="text-[#ffffff]">{value}</span>
-    </li>
-  );
-}
-
-/* -------------------------------- knowledge -------------------------------- */
-
-function Knowledge() {
-  return (
-    <section id="stack" className="section-shell">
-      <Reveal>
-        <p className="section-index">03 — Stack</p>
-        <div className="section-head-row">
-          <h2 className="section-title">Tools I use.</h2>
-          <p className="max-w-sm text-sm leading-relaxed text-[#999999]">
-            Four groups, one pipeline — from language to deploy. Pick a lane or take the whole
-            stack.
-          </p>
-        </div>
-      </Reveal>
-      <div className="mt-12 grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STACK.map((g, i) => (
-          <Reveal key={g.group} delay={Math.min(i * 40, 200)}>
-            <div className="card h-full p-4">
-              <p className="text-xs font-medium tracking-widest text-[#ff8a8a] uppercase">
-                0{i + 1} — {g.group}
-              </p>
-              <ul className="mt-4 space-y-4 text-sm">
-                {g.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-[#ffffff]">
-                    <span className="h-1 w-1 rounded-full bg-[#ff8a8a]" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
         ))}
       </div>
-    </section>
-  );
-}
 
-/* ----------------------------------- faq ----------------------------------- */
+      <h3 className="section-label">Stack at a glance</h3>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Tools</th>
+          </tr>
+        </thead>
+        <tbody>
+          {STACK_TABLE.map((r) => (
+            <tr key={r.group}>
+              <td style={{ fontWeight: 600 }}>{r.group}</td>
+              <td style={{ color: "var(--text-muted)" }}>{r.items}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-function Faq() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  return (
-    <section id="faq" className="section-shell">
-      <Reveal>
-        <p className="section-index">04 — FAQ</p>
-        <h2 className="section-title">Questions, answered.</h2>
-      </Reveal>
-      <div className="mt-12 w-full">
+      <h3 className="section-label">Questions, answered</h3>
+      <div className="faq-list">
         {FAQS.map((f, i) => {
-          const open = openIndex === i;
+          const isOpen = open === i;
           return (
-            <Reveal key={f.q} delay={Math.min(i * 40, 160)}>
-              <div className={`faq-item ${open ? "faq-item-open" : ""}`}>
-                <button
-                  onClick={() => setOpenIndex(open ? null : i)}
-                  aria-expanded={open}
-                  className="faq-trigger"
-                >
-                  <span className="faq-q">
-                    <span className="faq-index">0{i + 1}</span>
-                    {f.q}
-                  </span>
-                  <span className={`faq-icon ${open ? "faq-icon-open" : ""}`} aria-hidden="true">
-                    +
-                  </span>
-                </button>
-                <div className={`faq-answer ${open ? "faq-answer-open" : ""}`}>
-                  <p className="faq-answer-inner">{f.a}</p>
+            <div key={f.q} className="faq-item">
+              <button
+                className="faq-btn"
+                aria-expanded={isOpen}
+                onClick={() => setOpen(isOpen ? null : i)}
+              >
+                <span>{f.q}</span>
+                <span className="badge">{isOpen ? "−" : "+"}</span>
+              </button>
+              <div className={`faq-panel ${isOpen ? "open" : ""}`}>
+                <div className="faq-panel-inner">
+                  <p className="faq-answer">{f.a}</p>
                 </div>
               </div>
-            </Reveal>
+            </div>
           );
         })}
       </div>
+
+      <div style={{ marginTop: 30, display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <button className="btn-primary" onClick={() => onNavigate("portfolio")}>
+          View portfolio
+        </button>
+        <button className="btn-ghost" onClick={() => onNavigate("resume")}>
+          View resume
+        </button>
+      </div>
     </section>
   );
 }
 
-/* ----------------------------------- cta ----------------------------------- */
+/* ---------------------------------- resume --------------------------------- */
 
-function Cta() {
+function ResumePanel() {
   return (
-    <section id="contact" className="section-shell">
-      <Reveal>
-        <div className="cta-panel">
-          <span className="badge">05 — Contact</span>
-          <h2 className="cta-title">
-            Have a project in mind? Let&apos;s talk.
-          </h2>
-          <p className="mt-4 max-w-xl leading-relaxed text-[#999999]">
-            Whether it&apos;s an IoT prototype, a full-stack build, or a mobile app — I&apos;m
-            happy to chat.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <a
-              href="https://www.linkedin.com/in/rocky-alessandro-66972535a/"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-pill-light"
-            >
-              LinkedIn <span aria-hidden="true">→</span>
-            </a>
-            <a
-              href="https://github.com/rockhubzz"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-pill-light"
-            >
-              GitHub <span aria-hidden="true">→</span>
-            </a>
-            <a href="mailto:rockyalessandro7@gmail.com" className="btn-ghost">
-              Email
-            </a>
+    <section className="tab-panel">
+      <div className="page-head">
+        <h2 className="page-title">Resume</h2>
+        <div className="title-underline" />
+        <p className="lead">
+          Four groups, one pipeline — from language to deploy. Education, experience, and working
+          skills.
+        </p>
+      </div>
+
+      <h3 className="section-label" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <GraduationCap size={20} /> Education
+      </h3>
+      <div className="card">
+        <ul className="timeline">
+          <li className="timeline-item">
+            <span className="timeline-dot" />
+            <div className="timeline-date">2023 — Present</div>
+            <h3 className="card-title" style={{ fontSize: 24, marginTop: 10 }}>
+              Politeknik Negeri Malang
+            </h3>
+            <p className="card-text">Diploma IV — Informatics Engineering. Data structures, web, frameworks, mobile, databases, OOP.</p>
+            <div style={{ marginTop: 15, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {["Data Structures", "Web", "Mobile", "Databases", "OOP"].map((c) => (
+                <span key={c} className="badge">{c}</span>
+              ))}
+            </div>
+          </li>
+          <li className="timeline-item">
+            <span className="timeline-dot" />
+            <div className="timeline-date">2025</div>
+            <h3 className="card-title" style={{ fontSize: 24, marginTop: 10 }}>
+              Sarastya Agility — Intern
+            </h3>
+            <p className="card-text">Full Stack Developer Intern. Backend web, Flutter, Next.js, .NET/C#, CI/CD.</p>
+            <div style={{ marginTop: 15, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {["Next.js", "Flutter", ".NET", "CI/CD"].map((c) => (
+                <span key={c} className="badge">{c}</span>
+              ))}
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <h3 className="section-label" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <Briefcase size={20} /> Experience
+      </h3>
+      <div className="card">
+        <ul className="timeline">
+          <li className="timeline-item">
+            <span className="timeline-dot" />
+            <div className="timeline-date">2025 — 2026</div>
+            <h3 className="card-title" style={{ fontSize: 24, marginTop: 10 }}>
+              IoT Telemetry — Fire Hydrant
+            </h3>
+            <p className="card-text">Sensors to dashboard: pressure, flow, status telemetry with a polished React frontend.</p>
+          </li>
+          <li className="timeline-item">
+            <span className="timeline-dot" />
+            <div className="timeline-date">2025</div>
+            <h3 className="card-title" style={{ fontSize: 24, marginTop: 10 }}>
+              MyMBG Kitchen Operations
+            </h3>
+            <p className="card-text">Ingredients, recipes, production tracking, and distribution for Makan Bergizi Gratis.</p>
+          </li>
+          <li className="timeline-item">
+            <span className="timeline-dot" />
+            <div className="timeline-date">2024 — 2025</div>
+            <h3 className="card-title" style={{ fontSize: 24, marginTop: 10 }}>
+              Flutter Builds — Jawara
+            </h3>
+            <p className="card-text">Resident records app backed by a PHP service layer.</p>
+          </li>
+        </ul>
+      </div>
+
+      <h3 className="section-label" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <BookOpen size={20} /> Working skills
+      </h3>
+      <div className="card">
+        {SKILLS.map((s) => (
+          <div key={s.name} className="skill-row">
+            <div className="skill-head">
+              <span style={{ fontWeight: 600 }}>{s.name}</span>
+              <span className="badge">{s.level}%</span>
+            </div>
+            <div className="skill-track">
+              <div className="skill-fill" style={{ width: `${s.level}%` }} />
+            </div>
           </div>
-          <div className="cta-meta">
-            <span>rockyalessandro7@gmail.com</span>
-            <span aria-hidden="true">·</span>
-            <span>Malang, East Java</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------- portfolio -------------------------------- */
+
+function PortfolioPanel() {
+  const [filter, setFilter] = useState("All");
+  const filtered =
+    filter === "All"
+      ? PROJECTS
+      : PROJECTS.filter((p) => p.tags.some((t) => t.toLowerCase().includes(filter.toLowerCase())));
+
+  return (
+    <section className="tab-panel">
+      <div className="page-head">
+        <h2 className="page-title">Portfolio</h2>
+        <div className="title-underline" />
+        <p className="lead">
+          Things I&apos;ve built — {PROJECTS.length} selected projects. Filter by stack, open the
+          repo, or try the live demo.
+        </p>
+      </div>
+
+      <div className="filter-row" role="group" aria-label="Filter projects">
+        {FILTERS.map((f) => (
+          <button
+            key={f}
+            aria-pressed={filter === f}
+            onClick={() => setFilter(f)}
+            className={`filter-btn ${filter === f ? "active" : ""}`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      <div className="portfolio-grid">
+        {filtered.map((p) => (
+          <article key={p.name} className="card project-card">
+            <div className="project-media">
+              {p.screenshot ? (
+                <img
+                  src={p.screenshot}
+                  alt={`${p.name} screenshot`}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              ) : (
+                <span className="badge">No preview</span>
+              )}
+            </div>
+            <div className="project-body">
+              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <span className="badge">{p.tags[0]}</span>
+                {p.demo && <span className="badge badge-dark">Live</span>}
+              </div>
+              <h3 className="card-title" style={{ fontSize: 24 }}>{p.name}</h3>
+              <p className="card-text">{p.description}</p>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                {p.tags.map((t) => (
+                  <span key={t} className="badge">{t}</span>
+                ))}
+              </div>
+              <div className="project-links">
+                <a href={p.href} target="_blank" rel="noreferrer" className="link-strong">
+                  Repository →
+                </a>
+                {p.demo && (
+                  <a href={p.demo} target="_blank" rel="noreferrer" className="link-muted">
+                    Demo →
+                  </a>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {filtered.length === 0 && (
+        <div className="card" style={{ marginTop: 20 }}>
+          <p className="card-text">No projects match this filter.</p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* --------------------------------- contact ---------------------------------- */
+
+function ContactPanel() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSent(true);
+  };
+
+  return (
+    <section className="tab-panel">
+      <div className="page-head">
+        <h2 className="page-title">Contact</h2>
+        <div className="title-underline" />
+        <p className="lead">
+          Have a project in mind? Whether it&apos;s an IoT prototype, a full-stack build, or a
+          mobile app — I&apos;m happy to chat.
+        </p>
+      </div>
+
+      <div className="contact-grid">
+        <div className="card">
+          <h3 className="card-title" style={{ fontSize: 24 }}>Direct channels</h3>
+          <p className="card-text">Email works best. I reply with scope and milestones.</p>
+          <ul className="contact-list" style={{ marginTop: 20 }}>
+            <li className="contact-item">
+              <span className="contact-icon"><Mail size={20} /></span>
+              <div>
+                <div className="contact-label">Email</div>
+                <div className="contact-value">
+                  <a href="mailto:rockyalessandro7@gmail.com">rockyalessandro7@gmail.com</a>
+                </div>
+              </div>
+            </li>
+            <li className="contact-item">
+              <span className="contact-icon"><Github size={20} /></span>
+              <div>
+                <div className="contact-label">GitHub</div>
+                <div className="contact-value">
+                  <a href="https://github.com/rockhubzz" target="_blank" rel="noreferrer">
+                    github.com/rockhubzz
+                  </a>
+                </div>
+              </div>
+            </li>
+            <li className="contact-item">
+              <span className="contact-icon"><Linkedin size={20} /></span>
+              <div>
+                <div className="contact-label">LinkedIn</div>
+                <div className="contact-value">
+                  <a
+                    href="https://www.linkedin.com/in/rocky-alessandro-66972535a/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Rocky Alessandro
+                  </a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3 className="card-title" style={{ fontSize: 24 }}>Send a message</h3>
+          <p className="card-text">Opens as a draft — nothing is stored.</p>
+          <form onSubmit={submit} style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 20 }}>
+            <div className="form-grid form-grid-2">
+              <div>
+                <label className="field-label" htmlFor="vc-name">Name</label>
+                <input
+                  id="vc-name"
+                  className="input"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="field-label" htmlFor="vc-email">Email</label>
+                <input
+                  id="vc-email"
+                  className="input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="vc-msg">Message</label>
+              <textarea
+                id="vc-msg"
+                className="input"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="What are you building? Timeline? Links?"
+                required
+              />
+            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <button type="submit" className="btn-primary">
+                <Send size={16} /> Send message
+              </button>
+              <a
+                href={`mailto:rockyalessandro7@gmail.com?subject=${encodeURIComponent(
+                  `Portfolio inquiry from ${name || "website"}`
+                )}&body=${encodeURIComponent(`${message}\n\n— ${name} (${email})`)}`}
+                className="btn-ghost"
+              >
+                Open in email
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {sent && (
+        <div className="modal-backdrop" onClick={() => setSent(false)}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Message ready" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 15, alignItems: "center" }}>
+              <h3 className="card-title" style={{ fontSize: 24 }}>Ready to send</h3>
+              <button className="social-btn" aria-label="Close" onClick={() => setSent(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <p className="card-text" style={{ marginTop: 15 }}>
+              Thanks{name ? `, ${name}` : ""}. Your draft is addressed to
+              rockyalessandro7@gmail.com — click confirm to open your mail app.
+            </p>
+            <div style={{ marginTop: 25, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <a
+                href={`mailto:rockyalessandro7@gmail.com?subject=${encodeURIComponent(
+                  `Portfolio inquiry from ${name || "website"}`
+                )}&body=${encodeURIComponent(`${message}\n\n— ${name} (${email})`)}`}
+                className="btn-primary"
+              >
+                Confirm
+              </a>
+              <button className="btn-ghost" onClick={() => setSent(false)}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-      </Reveal>
+      )}
     </section>
-  );
-}
-
-/* --------------------------------- footer ---------------------------------- */
-
-function Footer() {
-  const [year, setYear] = useState<number | null>(null);
-  useEffect(() => setYear(new Date().getFullYear()), []);
-  return (
-    <footer className="border-t border-[#333333] bg-[#000000]">
-      <div className="mx-auto flex w-full max-w-[60rem] flex-col gap-4 px-4 py-8 text-sm text-[#999999] sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <span>© {year ?? ""} Rocky Alessandro Kristanto</span>
-        <nav className="flex flex-wrap gap-4" aria-label="Footer">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="footer-link">
-              {l.label}
-            </a>
-          ))}
-        </nav>
-        <a href="#top" className="footer-link">
-          Back to top ↑
-        </a>
-      </div>
-    </footer>
   );
 }
