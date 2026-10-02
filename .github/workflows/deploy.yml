@@ -1,22 +1,59 @@
-name: Deploy to GitHub Pages
+name: Deploy Worker and Pages
+
 on:
   push:
-    branches: [main]
+    branches: [worker, main]
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 jobs:
-  deploy:
+  deploy-worker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install
-      - name: Build (tolerate known Nitro server-bundle bug)
-        run: bun run build || true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Verify worker bundle exists
+        run: test -f .output/server/index.mjs
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+  deploy-pages:
+    # The github-pages environment only allows deploys from main
+    # (see Settings -> Environments -> github-pages -> Deployment branches).
+    # Keep this gate until/unless the worker branch is added there.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
       - name: Verify static output exists
         run: test -f .output/public/index.html
+      - name: Prepare Pages artifact
+        run: |
+          cp .output/public/index.html .output/public/404.html
+          touch .output/public/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .output/public
