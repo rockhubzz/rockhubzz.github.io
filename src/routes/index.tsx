@@ -370,7 +370,7 @@ function AboutPanel({ onNavigate }: { onNavigate: (t: TabId) => void }) {
         <h2 className="page-title">About Me</h2>
         <div className="title-underline" />
         <p className="lead">
-          I&apos;m Rocky Alessandro Kristanto — a developer at Politeknik Negeri Malang. I build
+          I&apos;m Rocky Alessandro Kristanto — an Informatics Technology student at Politeknik Negeri Malang. I build
           dedicated systems for real operations, from firmware and sensors to interfaces people
           actually enjoy using. Code isn&apos;t everything. Results matter.
         </p>
