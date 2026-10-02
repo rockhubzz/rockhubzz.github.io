@@ -477,9 +477,17 @@ function ResumePanel() {
               ))}
             </div>
           </li>
+        </ul>
+      </div>
+
+      <h3 className="section-label" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <Briefcase size={20} /> Experience
+      </h3>
+      <div className="card">
+        <ul className="timeline">
           <li className="timeline-item">
             <span className="timeline-dot" />
-            <div className="timeline-date">2025</div>
+            <div className="timeline-date">Aug 2026 — Dec 2026</div>
             <h3 className="card-title" style={{ fontSize: 24, marginTop: 10 }}>
               Sarastya Agility — Intern
             </h3>
@@ -490,14 +498,6 @@ function ResumePanel() {
               ))}
             </div>
           </li>
-        </ul>
-      </div>
-
-      <h3 className="section-label" style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <Briefcase size={20} /> Experience
-      </h3>
-      <div className="card">
-        <ul className="timeline">
           <li className="timeline-item">
             <span className="timeline-dot" />
             <div className="timeline-date">2025 — 2026</div>
